@@ -39,8 +39,6 @@ jobs:
         working-directory: trace-viewer
         id: detect-package-manager
         run: |
-          echo ${{ env.working-directory }}
-          echo ${{ github.workspace }}
           if [ -f "${{ env.working-directory }}/yarn.lock" ]; then
             echo "manager=yarn" >> $GITHUB_OUTPUT
             echo "command=install" >> $GITHUB_OUTPUT
@@ -60,6 +58,7 @@ jobs:
         with:
           node-version: "16"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
+          cache-dependency-path: ${{ env.working-directory }}/yarn.json
       - name: Setup Pages
         uses: actions/configure-pages@v3
         with:
