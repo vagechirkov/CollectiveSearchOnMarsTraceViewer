@@ -39,6 +39,8 @@ jobs:
         working-directory: trace-viewer
         id: detect-package-manager
         run: |
+          echo ${{ env.working-directory }}
+          echo ${{ github.workspace }}
           if [ -f "${{ env.working-directory }}/yarn.lock" ]; then
             echo "manager=yarn" >> $GITHUB_OUTPUT
             echo "command=install" >> $GITHUB_OUTPUT
