@@ -86,8 +86,8 @@ jobs:
 #        uses: actions/upload-pages-artifact@v1
 #        show the folder contents
         run: ls -la
-        with:
-          path: ./out
+#        with:
+#          path: ./out
 
   # Deployment job
   deploy:
