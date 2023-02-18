@@ -36,7 +36,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Detect package manager
-        working-directory: trace-viewer
         id: detect-package-manager
         run: |
           if [ -f "${{ env.working-directory }}/yarn.lock" ]; then
@@ -58,7 +57,6 @@ jobs:
         with:
           node-version: "16"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
-          cache-dependency-path: trace-viewer/yarn.json
       - name: Setup Pages
         uses: actions/configure-pages@v3
         with:
