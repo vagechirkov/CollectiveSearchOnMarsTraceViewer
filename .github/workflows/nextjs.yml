@@ -24,11 +24,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  env:
-    working-directory: ./trace-viewer
-
   # Build job
   build:
+    env:
+      working-directory: ./trace-viewer
     runs-on: ubuntu-latest
     defaults:
       run:
