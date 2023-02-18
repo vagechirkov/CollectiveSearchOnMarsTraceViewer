@@ -1,14 +1,14 @@
 import {FC, useMemo} from "react";
 import useTraceContext, {traceFile} from "@/context/TracesContext";
 import {ACTIONS} from "@/context/TracesReducer";
-import {useDropzone} from "react-dropzone";
-import {Avatar, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, styled} from "@mui/material";
+import {useDropzone, FileWithPath} from "react-dropzone";
+import {Avatar, List, ListItemAvatar, ListItemButton, ListItemText, styled} from "@mui/material";
 import DescriptionIcon from '@mui/icons-material/Description';
 
 const baseStyle = {
     flex: 1,
     display: 'flex',
-    flexDirection: 'column',
+    // flexDirection: 'column',
     alignItems: 'center',
     padding: '20px',
     borderWidth: 2,
@@ -49,7 +49,7 @@ const TraceReader: FC = () => {
         {
             accept: {'text/txt': ['.txt'],},
             onDrop: (acceptedFiles) => {
-                acceptedFiles.forEach((file) => {
+                acceptedFiles.forEach((file: FileWithPath) => {
                     const reader = new FileReader();
                     reader.onload = () => {
                         const text = reader.result;

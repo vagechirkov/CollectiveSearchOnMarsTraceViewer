@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Arena from "@/components/Arena";
 import TraceReader from "@/components/TraceReader";
-import {Box, Drawer, Grid, IconButton, styled, Toolbar, Typography, useTheme} from "@mui/material";
+import {Box, Drawer, IconButton, styled, Toolbar, Typography, useTheme} from "@mui/material";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import {useState} from "react";
 import MenuIcon from '@mui/icons-material/Menu';
