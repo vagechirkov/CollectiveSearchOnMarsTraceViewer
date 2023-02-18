@@ -19,7 +19,8 @@ export const tracesInitialState: TracesState = {
 }
 
 const tracesInitializer = (initialState: TracesState) => {
-    return JSON.parse(localStorage.getItem(LOCAL_STORAGE_TRACES_STATE_KEY) || '{}') || initialState;
+    // return JSON.parse(localStorage.getItem(LOCAL_STORAGE_TRACES_STATE_KEY) || '{}') || initialState;
+    return initialState;
 }
 
 interface ITracesContextProvider {
@@ -27,14 +28,14 @@ interface ITracesContextProvider {
     saveToLocalStorage?: boolean;
 }
 
-export const NetworkContextProvider: FC<ITracesContextProvider> = (props) => {
+export const TracesContextProvider: FC<ITracesContextProvider> = (props) => {
     const {children, saveToLocalStorage=true} = props;
     const [state, dispatch] = useReducer(tracesReducer, tracesInitialState, tracesInitializer);
 
-    useEffect(() => {
-        if(saveToLocalStorage)
-            localStorage.setItem(LOCAL_STORAGE_TRACES_STATE_KEY, JSON.stringify(state));
-    }, [state]);
+    // useEffect(() => {
+    //     if(saveToLocalStorage)
+    //         localStorage.setItem(LOCAL_STORAGE_TRACES_STATE_KEY, JSON.stringify(state));
+    // }, [state]);
 
     return (
         <TraceContext.Provider value={{tracesState: state, tracesDispatcher: dispatch}}>
@@ -46,4 +47,4 @@ export const NetworkContextProvider: FC<ITracesContextProvider> = (props) => {
 
 const useTraceContext = () => useContext(TraceContext);
 
-export default useTraceContext;
+export default useTraceContext as () => TracesContextType;

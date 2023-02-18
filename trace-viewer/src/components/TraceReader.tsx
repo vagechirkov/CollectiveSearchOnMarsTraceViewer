@@ -1,12 +1,14 @@
 import {ChangeEvent, FC} from "react";
+import useTraceContext from "@/context/TracesContext";
+import {ACTIONS} from "@/context/TracesReducer";
 
 
 const TraceReader: FC = () => {
+    const {tracesState, tracesDispatcher} = useTraceContext();
     let fileReader: FileReader;
 
     const handleFileRead = () => {
-        const content = fileReader.result;
-        console.log(content)
+        tracesDispatcher({type: ACTIONS.ADD_TRACE, payload: {content: fileReader.result}});
         // … do something with the 'content' …
     };
 
