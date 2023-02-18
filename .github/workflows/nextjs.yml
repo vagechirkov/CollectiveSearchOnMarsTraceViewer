@@ -27,7 +27,7 @@ jobs:
   # Build job
   build:
     env:
-      working-directory: ${{ github.workspace }}/trace-viewer
+      working-directory: ./trace-viewer
     runs-on: ubuntu-latest
     defaults:
       run:
