@@ -86,7 +86,7 @@ jobs:
         uses: actions/upload-pages-artifact@v1
 #        run: ls -la
         with:
-          path: '**/out'
+          path: ${{ env.working-directory }}/out
 
   # Deployment job
   deploy:
