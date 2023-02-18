@@ -1,7 +1,8 @@
-import {FC, useState} from "react";
+import {FC, useEffect, useState} from "react";
 import useTraceContext from "@/context/TracesContext";
 import Agent from "@/components/Agent";
 import {Slider} from "@mui/material";
+import {ACTIONS} from "@/context/TracesReducer";
 
 const colors = [
     "#D5D5D3",
@@ -16,15 +17,20 @@ interface IArena {
 
 }
 
-const Arena: FC<IArena> = (props) => {
+const Arena: FC<IArena> = () => {
     const [time, setTime] = useState<number>(0);
-    const {tracesState} = useTraceContext();
+    const {tracesState, tracesDispatcher} = useTraceContext();
+
+    useEffect(() => {
+        if (tracesState.traces === undefined && tracesState.files !== undefined && tracesState.files.length > 0)
+            tracesDispatcher({type: ACTIONS.ADD_TRACE, payload: {content: tracesState.files[0].content}});
+    }, [tracesState.files])
 
     return (
         <>
             <svg width="700" height="700" viewBox="-350 -350 700 700">
                 <g>
-                    <circle cx="0" cy="0" r={`${375/2}`} fill="none" stroke="black"/>
+                    <circle cx="0" cy="0" r={`${375 / 2}`} fill="none" stroke="black"/>
                     {tracesState.traces !== undefined &&
                         tracesState.traces.map((trace, index) => {
                             return (
