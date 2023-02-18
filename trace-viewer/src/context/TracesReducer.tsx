@@ -9,11 +9,7 @@ const tracesReducer = (state: TracesState, action: any) => {
         case ACTIONS.ADD_TRACE:
             // parse the text file with traces
             const agents = parseTrace(action.payload.content);
-            agents.map((trace, index) => {
-                return (
-                    console.log(trace)
-                )
-            })
+            agents.map((trace, index) => console.log(trace.x, trace.z))
             return {
                 ...state,
                 traces: agents
@@ -42,7 +38,6 @@ const parseTrace = (trace: string) => {
                 // find id of the agent traces
                 let agentTraceInx = agentTraces.findIndex((trace) => trace.id === parseInt(values[1]));
 
-
                 // if agent trace does not exist, create it
                 if (agentTraceInx === -1) {
                     agentTraces.push({
@@ -50,7 +45,7 @@ const parseTrace = (trace: string) => {
                         time: [],
                         x: [],
                         z: [],
-                        y: [],
+                        rotation: [],
                         signaling: [],
                         score: []
                     })
@@ -61,7 +56,7 @@ const parseTrace = (trace: string) => {
                 agentTraces[agentTraceInx].time.push(parseInt(values[0]));
                 agentTraces[agentTraceInx].x.push(parseInt(values[2]));
                 agentTraces[agentTraceInx].z.push(parseInt(values[3]));
-                agentTraces[agentTraceInx].y.push(parseInt(values[4]));
+                agentTraces[agentTraceInx].rotation.push(parseInt(values[4]));
                 agentTraces[agentTraceInx].signaling.push(parseInt(values[5]));
                 agentTraces[agentTraceInx].score.push(parseInt(values[6]));
             }

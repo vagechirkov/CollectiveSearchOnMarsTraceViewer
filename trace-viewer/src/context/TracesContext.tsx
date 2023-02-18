@@ -8,7 +8,7 @@ export type agentTrace = {
     time: number[];
     x: number[];
     z: number[];
-    y: number[];
+    rotation: number[];
     signaling: number[];
     score: number[];
 }
