@@ -2,7 +2,7 @@ import {FC, useMemo} from "react";
 import useTraceContext, {traceFile} from "@/context/TracesContext";
 import {ACTIONS} from "@/context/TracesReducer";
 import {useDropzone} from "react-dropzone";
-import {Avatar, List, ListItem, ListItemAvatar, ListItemText, styled} from "@mui/material";
+import {Avatar, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, styled} from "@mui/material";
 import DescriptionIcon from '@mui/icons-material/Description';
 
 const baseStyle = {
@@ -96,7 +96,7 @@ const TraceReader: FC = () => {
                     <List dense={true}>
                         {tracesState.files.map((file) => {
                                 return (
-                                    <ListItem
+                                    <ListItemButton
                                         key={file.name}
                                         onClick={onFileClick}
                                     >
@@ -105,8 +105,12 @@ const TraceReader: FC = () => {
                                                 <DescriptionIcon/>
                                             </Avatar>
                                         </ListItemAvatar>
-                                        <ListItemText primary={file.name}/>
-                                    </ListItem>
+                                        <ListItemText
+                                            primaryTypographyProps={{noWrap: true}}
+                                            primary={file.name}
+                                            style={{overflow: "hidden", textOverflow: "ellipsis", width: '11rem'}}
+                                        />
+                                    </ListItemButton >
                                 );
                             }
                             )
