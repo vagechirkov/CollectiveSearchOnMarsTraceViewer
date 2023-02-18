@@ -84,7 +84,7 @@ jobs:
         run: ${{ steps.detect-package-manager.outputs.runner }} next export
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
-        run: ls -la
+#        run: ls -la
         with:
           path: '**/out'
 
