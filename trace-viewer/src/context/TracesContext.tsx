@@ -1,10 +1,20 @@
-import {createContext, FC, useContext, useEffect, useReducer} from "react";
+import {createContext, FC, useContext, useReducer} from "react";
 import tracesReducer from "@/context/TracesReducer";
 
 const LOCAL_STORAGE_TRACES_STATE_KEY = 'networkState';
 
+export type agentTrace = {
+    id: number;
+    time: number[];
+    x: number[];
+    z: number[];
+    y: number[];
+    signaling: number[];
+    score: number[];
+}
+
 export type TracesState = {
-    traces: any[];
+    traces: agentTrace[] | undefined;
 }
 
 export type TracesContextType = {
@@ -15,7 +25,7 @@ export type TracesContextType = {
 const TraceContext = createContext<TracesContextType | null>(null);
 
 export const tracesInitialState: TracesState = {
-    traces: []
+    traces: undefined
 }
 
 const tracesInitializer = (initialState: TracesState) => {
