@@ -28,6 +28,7 @@ const Arena: FC<IArena> = (props) => {
         <>
             <svg width="700" height="700" viewBox="-350 -350 700 700">
                 <g>
+                    <circle cx="0" cy="0" r={`${375/2}`} fill="none" stroke="black"/>
                     {
                         tracesState.traces.map((trace, index) => {
                             return (

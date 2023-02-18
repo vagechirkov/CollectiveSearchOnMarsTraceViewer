@@ -26,7 +26,13 @@ const Agent: FC<IAgent> = (props) => {
 
     return (
         <>
-            <circle cx={position.x} cy={position.z} r="5" fill={agentColors}/>
+            <circle
+                cx={position.x}
+                cy={position.z}
+                r={trace.id == 0 ? "40" : "10"}
+                style={{opacity: trace.id == 0 ? 0.5 : 1}}
+                fill={agentColors}
+            />
         </>
 
     )
