@@ -9,8 +9,14 @@ const tracesReducer = (state: TracesState, action: any) => {
         case ACTIONS.ADD_TRACE:
             // parse the text file with traces
             const agents = parseTrace(action.payload.content);
+            agents.map((trace, index) => {
+                return (
+                    console.log(trace)
+                )
+            })
             return {
-                ...state
+                ...state,
+                traces: agents
             }
 
         default:
@@ -30,11 +36,15 @@ const parseTrace = (trace: string) => {
                 // time, id, x, z, y, signaling, score
                 const values = line.split(' ');
 
-                // find agentTrace with id
-                const agentTrace = agentTraces.find(agentTrace => agentTrace.id === parseInt(values[1]));
+                // continue if id is not a number
+                if (isNaN(parseInt(values[1]))) return;
+
+                // find id of the agent traces
+                let agentTraceInx = agentTraces.findIndex((trace) => trace.id === parseInt(values[1]));
+
 
                 // if agent trace does not exist, create it
-                if (agentTrace === undefined) {
+                if (agentTraceInx === -1) {
                     agentTraces.push({
                         id: parseInt(values[1]),
                         time: [],
@@ -44,15 +54,16 @@ const parseTrace = (trace: string) => {
                         signaling: [],
                         score: []
                     })
+                    agentTraceInx = agentTraces.length - 1;
                 }
 
                 // add values to agentTrace
-                agentTraces[agentTraces.length - 1].time.push(parseInt(values[0]));
-                agentTraces[agentTraces.length - 1].x.push(parseInt(values[2]));
-                agentTraces[agentTraces.length - 1].z.push(parseInt(values[3]));
-                agentTraces[agentTraces.length - 1].y.push(parseInt(values[4]));
-                agentTraces[agentTraces.length - 1].signaling.push(parseInt(values[5]));
-                agentTraces[agentTraces.length - 1].score.push(parseInt(values[6]));
+                agentTraces[agentTraceInx].time.push(parseInt(values[0]));
+                agentTraces[agentTraceInx].x.push(parseInt(values[2]));
+                agentTraces[agentTraceInx].z.push(parseInt(values[3]));
+                agentTraces[agentTraceInx].y.push(parseInt(values[4]));
+                agentTraces[agentTraceInx].signaling.push(parseInt(values[5]));
+                agentTraces[agentTraceInx].score.push(parseInt(values[6]));
             }
         }
     )

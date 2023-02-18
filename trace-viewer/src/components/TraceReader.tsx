@@ -4,7 +4,7 @@ import {ACTIONS} from "@/context/TracesReducer";
 
 
 const TraceReader: FC = () => {
-    const {tracesState, tracesDispatcher} = useTraceContext();
+    const {tracesDispatcher} = useTraceContext();
     let fileReader: FileReader;
 
     const handleFileRead = () => {

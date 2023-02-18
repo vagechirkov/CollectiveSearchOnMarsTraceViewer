@@ -1,6 +1,5 @@
 import Head from 'next/head'
 import {Inter} from '@next/font/google'
-import Agent from "@/components/Agent";
 import Arena from "@/components/Arena";
 import TraceReader from "@/components/TraceReader";
 
@@ -17,23 +16,7 @@ export default function Home() {
             </Head>
             <main>
                 <TraceReader/>
-                <Arena>
-                    <>
-                        {
-                            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => {
-                                return (
-                                    <Agent
-                                        key={i}
-                                        agentPositions={{x: i*10, y: i*10}}
-                                        agentColors="lightgray"
-                                    />
-                                )
-                            })
-
-                        }
-                    </>
-                </Arena>
-
+                <Arena/>
             </main>
         </>
     )
