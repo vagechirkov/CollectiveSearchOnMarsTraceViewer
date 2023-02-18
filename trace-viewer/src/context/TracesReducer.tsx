@@ -2,6 +2,7 @@ import {agentTrace, TracesState} from "@/context/TracesContext";
 
 export const ACTIONS = {
     ADD_TRACE: 'ADD_TRACE',
+    ADD_FILE: 'ADD_FILE',
 }
 
 const tracesReducer = (state: TracesState, action: any) => {
@@ -13,6 +14,16 @@ const tracesReducer = (state: TracesState, action: any) => {
             return {
                 ...state,
                 traces: agents
+            }
+        case ACTIONS.ADD_FILE:
+            const file = action.payload.file;
+
+            // check if file is already added
+            if (state.files && state.files?.findIndex((f) => f.name === file.name) !== -1) return state;
+
+            return {
+                ...state,
+                files: [...state.files || [], file]
             }
 
         default:

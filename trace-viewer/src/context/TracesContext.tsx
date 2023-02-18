@@ -13,7 +13,13 @@ export type agentTrace = {
     score: number[];
 }
 
+export type traceFile = {
+    name: string;
+    content: string;
+}
+
 export type TracesState = {
+    files: traceFile[] | undefined;
     traces: agentTrace[] | undefined;
 }
 
@@ -25,6 +31,7 @@ export type TracesContextType = {
 const TraceContext = createContext<TracesContextType | null>(null);
 
 export const tracesInitialState: TracesState = {
+    files: undefined,
     traces: undefined
 }
 

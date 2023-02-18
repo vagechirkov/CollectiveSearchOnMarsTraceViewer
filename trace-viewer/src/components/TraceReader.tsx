@@ -1,34 +1,121 @@
-import {ChangeEvent, FC} from "react";
-import useTraceContext from "@/context/TracesContext";
+import {FC, useMemo} from "react";
+import useTraceContext, {traceFile} from "@/context/TracesContext";
 import {ACTIONS} from "@/context/TracesReducer";
+import {useDropzone} from "react-dropzone";
+import {Avatar, List, ListItem, ListItemAvatar, ListItemText, styled} from "@mui/material";
+import DescriptionIcon from '@mui/icons-material/Description';
 
+const baseStyle = {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '20px',
+    borderWidth: 2,
+    borderRadius: 2,
+    borderColor: '#eeeeee',
+    borderStyle: 'dashed',
+    backgroundColor: '#fafafa',
+    color: '#bdbdbd',
+    outline: 'none',
+    transition: 'border .24s ease-in-out'
+};
+
+const focusedStyle = {
+    borderColor: '#2196f3'
+};
+
+const acceptStyle = {
+    borderColor: '#00e676'
+};
+
+const rejectStyle = {
+    borderColor: '#ff1744'
+};
+
+const Demo = styled('div')(({ theme }) => ({
+    backgroundColor: theme.palette.background.paper,
+}));
 
 const TraceReader: FC = () => {
-    const {tracesDispatcher} = useTraceContext();
-    let fileReader: FileReader;
+    const {tracesState, tracesDispatcher} = useTraceContext();
+    const {
+        getRootProps,
+        getInputProps,
+        isFocused,
+        isDragAccept,
+        isDragReject
+    } = useDropzone(
+        {
+            accept: {'text/txt': ['.txt'],},
+            onDrop: (acceptedFiles) => {
+                acceptedFiles.forEach((file) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const text = reader.result;
+                        const path = file.path;
+                        tracesDispatcher({
+                            type: ACTIONS.ADD_FILE,
+                            payload: {file: {name: path, content: text} as traceFile}
+                        });
+                    }
+                    reader.readAsText(file);
+                });
+            }
+        }
+    );
 
-    const handleFileRead = () => {
-        tracesDispatcher({type: ACTIONS.ADD_TRACE, payload: {content: fileReader.result}});
-        // … do something with the 'content' …
-    };
+    const style = useMemo(() => ({
+        ...baseStyle,
+        ...(isFocused ? focusedStyle : {}),
+        ...(isDragAccept ? acceptStyle : {}),
+        ...(isDragReject ? rejectStyle : {})
+    }), [
+        isFocused,
+        isDragAccept,
+        isDragReject
+    ]);
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) =>
-    {
-        // prevent default action (open as link for some elements)
-        if (e.target.files === null) return;
-        e.preventDefault();
-        fileReader = new FileReader();
-        fileReader.onloadend = handleFileRead;
-        fileReader.readAsText(e.target.files[0]);
+    const onFileClick = (event: any) => {
+        if (!tracesState.files) return;
+        // select file based on the click event
+        const file = tracesState.files.find((file) => file.name === event.target.innerText);
+        if (!file) return;
+
+        tracesDispatcher({type: ACTIONS.ADD_TRACE, payload: {content: file.content}});
     }
 
     return (
-        <input
-            type="file"
-            accept='.txt'
-            onChange={e => handleChange(e)}
-        />
-    )
+        <div className="container">
+            <div {...getRootProps({style})}>
+                <input {...getInputProps()} />
+                <p>Drag 'n' drop trace files here, or click to select files</p>
+            </div>
+            {tracesState.files &&
+               ( <Demo>
+                    <List dense={true}>
+                        {tracesState.files.map((file) => {
+                                return (
+                                    <ListItem
+                                        key={file.name}
+                                        onClick={onFileClick}
+                                    >
+                                        <ListItemAvatar>
+                                            <Avatar>
+                                                <DescriptionIcon/>
+                                            </Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText primary={file.name}/>
+                                    </ListItem>
+                                );
+                            }
+                            )
+                        }
+                    </List>
+                </Demo>)
+            }
+        </div>
+    );
 }
 
 export default TraceReader;
