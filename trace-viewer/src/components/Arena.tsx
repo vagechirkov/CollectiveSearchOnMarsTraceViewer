@@ -1,12 +1,19 @@
 import {FC, useEffect, useState} from "react";
 import useTraceContext from "@/context/TracesContext";
 import Agent from "@/components/Agent";
-import {Box, Button, ButtonGroup, Grid, Slider} from "@mui/material";
+import {
+    Box,
+    Button,
+    ButtonGroup, Checkbox,
+    FormControl,
+    FormControlLabel,
+    FormGroup,
+    FormLabel,
+    Grid,
+    Slider
+} from "@mui/material";
 import {ACTIONS} from "@/context/TracesReducer";
-import List from '@mui/joy/List';
-import ListItem from '@mui/joy/ListItem';
-import Typography from '@mui/joy/Typography';
-import {Checkbox} from "@mui/joy";
+
 
 const colors = [
     "#D5D5D3",
@@ -27,6 +34,10 @@ function valueLabelFormat(value: number) {
     const minutes = Math.floor(millis / 60000);
     const seconds = ((millis % 60000) / 1000);
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds.toFixed(0)}.${(millis % 1000 / 100).toFixed(0)}`;
+}
+
+function estimateDistanceFromResource(x_resource: number, z_resource: number, x_agent: number, z_agent: number) {
+    return Math.sqrt(Math.pow(x_agent - x_resource, 2) + Math.pow(z_agent - z_resource, 2));
 }
 
 const Arena: FC<IArena> = () => {
@@ -67,21 +78,39 @@ const Arena: FC<IArena> = () => {
                         // style={{backgroundColor: "lightseagreen"}}
                     >
                         <Box>
-                            <Typography id="sandwich-group" level="body2" fontWeight="lg" mb={1}>
-                                Options
-                            </Typography>
-                            <Box role="group" aria-labelledby="sandwich-group">
-                                <List size="sm">
-                                    <ListItem>
-                                        <Checkbox label="Lettuce" defaultChecked/>
-                                    </ListItem>
-                                    <ListItem>
-                                        <Checkbox label="Tomato"/>
-                                    </ListItem>
-                                    <ListItem>
-                                        <Checkbox label="Mustard"/>
-                                    </ListItem>
-                                </List>
+                            <Box>
+                                <FormControl sx={{ m: 3 }} component="fieldset" variant="standard">
+                                    <FormLabel component="legend">Options</FormLabel>
+                                    <FormGroup>
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox
+                                                    // checked={gilad}
+                                                    // onChange={handleChange}
+                                                    name="founding" />
+                                            }
+                                            label="Show detections"
+                                        />
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox
+                                                    // checked={jason}
+                                                    // onChange={handleChange}
+                                                    name="signaling" />
+                                            }
+                                            label="Show signaling"
+                                        />
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox
+                                                    // checked={antoine}
+                                                    // onChange={handleChange}
+                                                    name="score" />
+                                            }
+                                            label="Show score"
+                                        />
+                                    </FormGroup>
+                                </FormControl>
                             </Box>
                         </Box>
                     </Grid>
@@ -100,12 +129,32 @@ const Arena: FC<IArena> = () => {
                     marks={tracesState.traces !== undefined && tracesState.traces[0].time.length > 0 ?
                         (
                             tracesState.traces[0].time.map((time, index) => {
-                                    // 10 samples per second
-                                    if (index % (10 * 60) === 0) return (
-                                        {value: index, label: `${(index / (10 * 60))}'`}
+                                    // check if any agent detected the resource
+                                    // if (tracesState.traces?.some((trace) => trace.time[index].resources.length > 0)) {
+
+                                    if (tracesState.traces?.some((trace) => {
+                                        if (trace.id === 0) return false;
+
+                                        // get time index
+                                        const timeIndex = trace.time.findIndex((t) => t ===time);
+
+                                        if (timeIndex === -1) return false;
+                                        if (tracesState.traces === undefined) return false;
+
+                                        return estimateDistanceFromResource(
+                                            tracesState.traces[0].x[index], tracesState.traces[0].z[index],
+                                            trace.x[timeIndex], trace.z[timeIndex]
+                                        ) < 40;
+                                    })) return (
+                                        {value: index, label: '⚡️'}
                                     );
                                 }
-                            ).filter((value) => value !== undefined) as { value: number, label: string }[]
+                            ).filter((value, index, array) => {
+                                const isCurrentNoUndefined = value !== undefined;
+                                const isPreviousNotUndefined = index === 0 || array[index - 1] !== undefined;
+                                // show only unique encounters or lost of the resource
+                                return isCurrentNoUndefined && !isPreviousNotUndefined;
+                            }) as { value: number, label: string }[]
                             //     [{value: 0, label: "0"}] as { value: number, label: string }[]
                         ) : false
                     }
