@@ -9,10 +9,12 @@ import {
     FormControlLabel,
     FormGroup,
     FormLabel,
-    Grid,
+    Grid, IconButton,
     Slider
 } from "@mui/material";
 import {ACTIONS} from "@/context/TracesReducer";
+import PauseCircleIcon from '@mui/icons-material/PauseCircle';
+import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 
 
 const colors = [
@@ -42,12 +44,26 @@ function estimateDistanceFromResource(x_resource: number, z_resource: number, x_
 
 const Arena: FC<IArena> = () => {
     const [time, setTime] = useState<number>(0);
+    const [play, setPlay] = useState<{isPlaying: boolean, speed: number}>({isPlaying: false, speed: 1});
     const {tracesState, tracesDispatcher} = useTraceContext();
 
     useEffect(() => {
         if (tracesState.traces === undefined && tracesState.files !== undefined && tracesState.files.length > 0)
             tracesDispatcher({type: ACTIONS.ADD_TRACE, payload: {content: tracesState.files[0].content}});
     }, [tracesState.files])
+
+    useEffect(() => {
+        if (play.isPlaying)
+        {
+            const interval = setInterval(() => {
+                if (time < tracesState.traces![0].time.length - 1)
+                    setTime(time + 1);
+                else
+                    setTime(0);
+            }, 100 / play.speed);
+            return () => clearInterval(interval);
+        }
+    }, [play.isPlaying, time, play.speed])
 
     return (
         <Grid container direction="column" justifyContent="space-between" spacing={2}>
@@ -120,6 +136,7 @@ const Arena: FC<IArena> = () => {
                 // style={{backgroundColor: "lightcoral"}}
             >
                 <Slider
+                    value={time}
                     defaultValue={0}
                     aria-label="Default"
                     valueLabelDisplay="auto"
@@ -167,9 +184,9 @@ const Arena: FC<IArena> = () => {
             >
                 <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', '& > *': {m: 1,},}}>
                     <ButtonGroup variant="text" aria-label="text button group">
-                        <Button>One</Button>
-                        <Button>Two</Button>
-                        <Button>Three</Button>
+                        <IconButton onClick={() => setPlay({isPlaying: !play.isPlaying, speed: play.speed})}>
+                            {play.isPlaying ? <PauseCircleIcon/> : <PlayCircleIcon/>}
+                        </IconButton>
                     </ButtonGroup>
                 </Box>
             </Grid>
