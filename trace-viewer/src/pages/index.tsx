@@ -28,6 +28,7 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
         }),
         marginLeft: 0,
     }),
+    // backgroundColor: "lightyellow",
 }));
 
 interface AppBarProps extends MuiAppBarProps {
@@ -94,7 +95,7 @@ export default function Home() {
                             <MenuIcon />
                         </IconButton>
                         <Typography variant="h6" noWrap component="div">
-                            Persistent drawer
+                            Trace Viewer
                         </Typography>
                     </Toolbar>
                 </AppBar>
