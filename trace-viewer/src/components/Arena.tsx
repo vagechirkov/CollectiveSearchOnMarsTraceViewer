@@ -18,10 +18,10 @@ import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 
 const colors = [
     "#D5D5D3",
-    "#9A8822",
-    "#F5CDB4",
     "#74A089",
     "#FDDDA0",
+    "#9A8822",
+    "#F5CDB4",
     "#F8AFA8",
 ]
 
@@ -42,7 +42,7 @@ function estimateDistanceFromResource(x_resource: number, z_resource: number, x_
 }
 
 function detectionMarks(traces: agentTrace[]) {
-    return traces[0].time.map((time, index) => {
+    return traces[0].time.map((resourceTime, index) => {
             // check if any agent detected the resource
             // if (tracesState.traces?.some((trace) => trace.time[index].resources.length > 0)) {
 
@@ -50,7 +50,7 @@ function detectionMarks(traces: agentTrace[]) {
                 if (trace.id === 0) return false;
 
                 // get time index
-                const timeIndex = trace.time.findIndex((t) => t === time);
+                const timeIndex = trace.time.findIndex((t) => t === resourceTime);
 
                 if (timeIndex === -1) return false;
 
@@ -65,34 +65,27 @@ function detectionMarks(traces: agentTrace[]) {
     ).filter((value, index, array) => {
         const isCurrentNoUndefined = value !== undefined;
         const isPreviousNotUndefined = index === 0 || array[index - 1] !== undefined;
+        const isNextUndefined = index < array.length - 1 && array[index + 1] === undefined;
+
         // show only unique encounters or lost of the resource
-        return isCurrentNoUndefined && !isPreviousNotUndefined;
+        return isCurrentNoUndefined && !isPreviousNotUndefined || isCurrentNoUndefined && isNextUndefined;
     }) as { value: number, label: string }[]
 }
 
-function signalingMarks(traces: agentTrace[]) {
-    return traces[0].time.map((time, index) => {
-            // check if any agent detected the resource
-            // if (tracesState.traces?.some((trace) => trace.time[index].resources.length > 0)) {
-
-            if (traces?.some((trace) => {
-                if (trace.id === 0) return false;
-
-                // get time index
-                const timeIndex = trace.time.findIndex((t) => t === time);
-
-                if (timeIndex === -1) return false;
-
-                return trace.signaling[timeIndex] === 1;
-            })) return (
-                {value: index, label: '📢'}
-            );
+function signalingMarks(resourceTimes: number[], tr: agentTrace) {
+    const signaling = resourceTimes.map((resourceTime, index) => {
+            const timeIndex = tr.time.findIndex((itime) =>  itime === resourceTime);
+            if (timeIndex !== -1 && tr.signaling[timeIndex] === 1) return {value: index, label: '🚨'};
         }
-    ).filter((value, index, array) => {
+    )
+    return signaling.filter((value, index, array) => {
         const isCurrentNoUndefined = value !== undefined;
         const isPreviousNotUndefined = index === 0 || array[index - 1] !== undefined;
+        // check if next is also signaling
+        const isNextUndefined = index < array.length - 1 && array[index + 1] === undefined;
+
         // show only unique encounters or lost of the resource
-        return isCurrentNoUndefined && !isPreviousNotUndefined;
+        return isCurrentNoUndefined && !isPreviousNotUndefined || isCurrentNoUndefined && isNextUndefined;
     }) as { value: number, label: string }[]
 }
 
@@ -100,9 +93,10 @@ const Arena: FC<IArena> = () => {
     const [time, setTime] = useState<number>(0);
     const [play, setPlay] = useState<{ isPlaying: boolean, speed: number }>({isPlaying: false, speed: 1});
     const [marks, setMarks] = useState<{ value: number, label: string }[] | false>(false);
-    const [options, setOptions] = useState<{ showDetectionMarks: boolean, showSignalingMarks: boolean }>({
+    const [options, setOptions] = useState<{ showDetectionMarks: boolean, showSignalingMarks: boolean, showInfo: boolean }>({
         showDetectionMarks: true,
-        showSignalingMarks: false
+        showSignalingMarks: true,
+        showInfo: true
     });
     const {tracesState, tracesDispatcher} = useTraceContext();
 
@@ -116,10 +110,16 @@ const Arena: FC<IArena> = () => {
     useEffect(() => {
         if (tracesState.traces !== undefined) {
             let m = [] as { value: number, label: string }[];
-            if(options.showDetectionMarks)
+            if (options.showDetectionMarks)
                 m = m.concat(detectionMarks(tracesState.traces));
-            if(options.showSignalingMarks)
-                m = m.concat(signalingMarks(tracesState.traces));
+            if (options.showSignalingMarks) {
+                // iterate over traces
+                tracesState.traces.forEach((t) => {
+                    if (t.id > 0 && tracesState.traces !== undefined) {
+                        m = m.concat(signalingMarks(tracesState.traces[0].time, t));
+                    }
+                });
+            }
             setMarks(m);
         }
 
@@ -155,8 +155,11 @@ const Arena: FC<IArena> = () => {
                                     {tracesState.traces !== undefined &&
                                         tracesState.traces.map((trace, index) => {
                                             return (
-                                                <Agent key={index} time={trace.time[time]} trace={trace}
-                                                       agentColors={colors[index]}/>
+                                                <Agent
+                                                    key={index}
+                                                    time={tracesState.traces ? tracesState.traces[0].time[time] : 0}
+                                                    trace={trace}
+                                                    agentColors={colors[index]} showInfo={options.showInfo}/>
                                             )
                                         })
                                     }
@@ -176,7 +179,12 @@ const Arena: FC<IArena> = () => {
                                             control={
                                                 <Checkbox
                                                     checked={options.showDetectionMarks}
-                                                    onChange={(event) => {setOptions({...options, showDetectionMarks: event.target.checked})}}
+                                                    onChange={(event) => {
+                                                        setOptions({
+                                                            ...options,
+                                                            showDetectionMarks: event.target.checked
+                                                        })
+                                                    }}
                                                     name="foundings"/>
                                             }
                                             label="Show detections"
@@ -185,7 +193,12 @@ const Arena: FC<IArena> = () => {
                                             control={
                                                 <Checkbox
                                                     checked={options.showSignalingMarks}
-                                                    onChange={(event) => {setOptions({...options, showSignalingMarks: event.target.checked})}}
+                                                    onChange={(event) => {
+                                                        setOptions({
+                                                            ...options,
+                                                            showSignalingMarks: event.target.checked
+                                                        })
+                                                    }}
                                                     name="signaling"/>
                                             }
                                             label="Show signaling"
@@ -193,11 +206,16 @@ const Arena: FC<IArena> = () => {
                                         <FormControlLabel
                                             control={
                                                 <Checkbox
-                                                    // checked={antoine}
-                                                    // onChange={handleChange}
-                                                    name="score"/>
+                                                    checked={options.showInfo}
+                                                    onChange={(event) => {
+                                                        setOptions({
+                                                            ...options,
+                                                            showInfo: event.target.checked
+                                                        })
+                                                    }}
+                                                    name="info"/>
                                             }
-                                            label="Show score"
+                                            label="Show info"
                                         />
                                     </FormGroup>
                                 </FormControl>
