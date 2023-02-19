@@ -105,10 +105,12 @@ const Arena: FC<IArena> = () => {
         if (play.isPlaying && tracesState.traces !== undefined) {
             const interval = setInterval(() => {
                 if (time < tracesState.traces![0].time.length - 1)
-                    setTime(time + 1);
-                else
+                    setTime(time + play.speed);
+                else {
                     setTime(0);
-            }, 100 / play.speed);
+
+                }
+            }, 100);
             return () => clearInterval(interval);
         }
     }, [play.isPlaying, time, play.speed])
@@ -208,6 +210,7 @@ const Arena: FC<IArena> = () => {
                                 <PauseCircleIcon style={{width: 50, height: 50}}/> :
                                 <PlayCircleIcon style={{width: 50, height: 50}}/>}
                         </IconButton>
+                        {/* add divider */}
                         <Select
                             labelId="demo-simple-select-autowidth-label"
                             id="demo-simple-select-autowidth"
@@ -216,13 +219,13 @@ const Arena: FC<IArena> = () => {
                                 isPlaying: play.isPlaying,
                                 speed: event.target.value as number
                             })}
-                            autoWidth
                             label="Speed"
+                            variant="standard"
                         >
-                            <MenuItem value={1}><em>x1</em></MenuItem>
-                            <MenuItem value={2}><em>x2</em></MenuItem>
-                            <MenuItem value={5}><em>x5</em></MenuItem>
-                            <MenuItem value={10}><em>x10</em></MenuItem>
+                            <MenuItem value={1}>x1</MenuItem>
+                            <MenuItem value={2}>x2</MenuItem>
+                            <MenuItem value={5}>x5</MenuItem>
+                            <MenuItem value={10}>x10</MenuItem>
                         </Select>
                     </ButtonGroup>
                 </Box>
