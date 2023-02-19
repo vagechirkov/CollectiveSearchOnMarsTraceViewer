@@ -51,7 +51,7 @@ const Agent: FC<IAgent> = (props) => {
                         cx={state.x}
                         cy={state.z}
                         r={trace.id == 0 ? "40" : "10"}
-                        style={{opacity: trace.id == 0 ? 0.5 : 1}}
+                        style={{opacity: trace.id == 0 ? 0.3 : 0.6}}
                         fill={agentColors}
                     />
                 </Tooltip>
