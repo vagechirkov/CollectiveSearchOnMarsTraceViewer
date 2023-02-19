@@ -126,6 +126,10 @@ const Arena: FC<IArena> = () => {
     }, [tracesState.traces, options.showDetectionMarks, options.showSignalingMarks])
 
     useEffect(() => {
+        setTime(0);
+    }, [tracesState.traces])
+
+    useEffect(() => {
         if (play.isPlaying && tracesState.traces !== undefined) {
             const interval = setInterval(() => {
                 if (time < tracesState.traces![0].time.length - 1)
