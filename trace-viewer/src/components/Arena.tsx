@@ -1,9 +1,8 @@
 import React, {FC, useEffect, useState} from "react";
-import useTraceContext, {agentTrace, TracesState} from "@/context/TracesContext";
+import useTraceContext, {agentTrace} from "@/context/TracesContext";
 import Agent from "@/components/Agent";
 import {
     Box,
-    Button,
     ButtonGroup, Checkbox,
     FormControl,
     FormControlLabel,
@@ -15,7 +14,6 @@ import {
 import {ACTIONS} from "@/context/TracesReducer";
 import PauseCircleIcon from '@mui/icons-material/PauseCircle';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
-import CircleIcon from '@mui/icons-material/Circle';
 
 
 const colors = [
@@ -72,6 +70,32 @@ function detectionMarks(traces: agentTrace[]) {
     }) as { value: number, label: string }[]
 }
 
+function signalingMarks(traces: agentTrace[]) {
+    return traces[0].time.map((time, index) => {
+            // check if any agent detected the resource
+            // if (tracesState.traces?.some((trace) => trace.time[index].resources.length > 0)) {
+
+            if (traces?.some((trace) => {
+                if (trace.id === 0) return false;
+
+                // get time index
+                const timeIndex = trace.time.findIndex((t) => t === time);
+
+                if (timeIndex === -1) return false;
+
+                return trace.signaling[timeIndex] === 1;
+            })) return (
+                {value: index, label: '📢'}
+            );
+        }
+    ).filter((value, index, array) => {
+        const isCurrentNoUndefined = value !== undefined;
+        const isPreviousNotUndefined = index === 0 || array[index - 1] !== undefined;
+        // show only unique encounters or lost of the resource
+        return isCurrentNoUndefined && !isPreviousNotUndefined;
+    }) as { value: number, label: string }[]
+}
+
 const Arena: FC<IArena> = () => {
     const [time, setTime] = useState<number>(0);
     const [play, setPlay] = useState<{ isPlaying: boolean, speed: number }>({isPlaying: false, speed: 1});
@@ -94,12 +118,12 @@ const Arena: FC<IArena> = () => {
             let m = [] as { value: number, label: string }[];
             if(options.showDetectionMarks)
                 m = m.concat(detectionMarks(tracesState.traces));
-            // if(options.showSignalingMarks)
-            //     m = m.concat(signalingMarks(tracesState.traces));
+            if(options.showSignalingMarks)
+                m = m.concat(signalingMarks(tracesState.traces));
             setMarks(m);
         }
 
-    }, [tracesState.traces, options.showDetectionMarks])
+    }, [tracesState.traces, options.showDetectionMarks, options.showSignalingMarks])
 
     useEffect(() => {
         if (play.isPlaying && tracesState.traces !== undefined) {
