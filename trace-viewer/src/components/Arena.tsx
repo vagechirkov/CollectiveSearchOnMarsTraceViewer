@@ -21,6 +21,14 @@ interface IArena {
 
 }
 
+function valueLabelFormat(value: number) {
+    const millis = value * 100;
+    // convert to m:s.ms
+    const minutes = Math.floor(millis / 60000);
+    const seconds = ((millis % 60000) / 1000);
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds.toFixed(0)}.${(millis % 1000 / 100).toFixed(0)}`;
+}
+
 const Arena: FC<IArena> = () => {
     const [time, setTime] = useState<number>(0);
     const {tracesState, tracesDispatcher} = useTraceContext();
@@ -31,32 +39,32 @@ const Arena: FC<IArena> = () => {
     }, [tracesState.files])
 
     return (
-        <Grid container  direction="column" justifyContent="space-between" spacing={2}>
+        <Grid container direction="column" justifyContent="space-between" spacing={2}>
             <Grid item xs={12} sm={12}
-                  // style={{backgroundColor: "lightgray"}}
+                // style={{backgroundColor: "lightgray"}}
             >
-                <Grid container direction="row" justifyContent="flex-end" alignItems="flex-start" spacing={2} >
+                <Grid container direction="row" justifyContent="flex-end" alignItems="flex-start" spacing={2}>
                     <Grid item xs={12} sm={9}
-                          // style={{backgroundColor: "lightskyblue"}}
+                        // style={{backgroundColor: "lightskyblue"}}
                     >
                         <Box display="flex" justifyContent="flex-end">
-                        <svg height={550} viewBox="-200 -200 400 400">
-                            <g>
-                                <circle cx="0" cy="0" r={`${375 / 2}`} fill="none" stroke="black"/>
-                                {tracesState.traces !== undefined &&
-                                    tracesState.traces.map((trace, index) => {
-                                        return (
-                                            <Agent key={index} time={trace.time[time]} trace={trace}
-                                                   agentColors={colors[index]}/>
-                                        )
-                                    })
-                                }
-                            </g>
-                        </svg>
+                            <svg height={550} viewBox="-200 -200 400 400">
+                                <g>
+                                    <circle cx="0" cy="0" r={`${375 / 2}`} fill="none" stroke="black"/>
+                                    {tracesState.traces !== undefined &&
+                                        tracesState.traces.map((trace, index) => {
+                                            return (
+                                                <Agent key={index} time={trace.time[time]} trace={trace}
+                                                       agentColors={colors[index]}/>
+                                            )
+                                        })
+                                    }
+                                </g>
+                            </svg>
                         </Box>
                     </Grid>
                     <Grid item xs={12} sm={3}
-                          // style={{backgroundColor: "lightseagreen"}}
+                        // style={{backgroundColor: "lightseagreen"}}
                     >
                         <Box>
                             <Typography id="sandwich-group" level="body2" fontWeight="lg" mb={1}>
@@ -80,7 +88,7 @@ const Arena: FC<IArena> = () => {
                 </Grid>
             </Grid>
             <Grid item xs
-                  // style={{backgroundColor: "lightcoral"}}
+                // style={{backgroundColor: "lightcoral"}}
             >
                 <Slider
                     defaultValue={0}
@@ -89,10 +97,24 @@ const Arena: FC<IArena> = () => {
                     min={0}
                     max={tracesState.traces !== undefined ? tracesState.traces[0].time.length - 1 : 0}
                     onChange={(event, value) => setTime(value as number)}
+                    marks={tracesState.traces !== undefined && tracesState.traces[0].time.length > 0 ?
+                        (
+                            tracesState.traces[0].time.map((time, index) => {
+                                    // 10 samples per second
+                                    if (index % (10 * 60) === 0) return (
+                                        {value: index, label: `${(index / (10 * 60))}'`}
+                                    );
+                                }
+                            ).filter((value) => value !== undefined) as { value: number, label: string }[]
+                            //     [{value: 0, label: "0"}] as { value: number, label: string }[]
+                        ) : false
+                    }
+                    getAriaValueText={valueLabelFormat}
+                    valueLabelFormat={valueLabelFormat}
                 />
             </Grid>
             <Grid item xs
-                  // style={{backgroundColor: "lightgreen"}}
+                // style={{backgroundColor: "lightgreen"}}
             >
                 <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', '& > *': {m: 1,},}}>
                     <ButtonGroup variant="text" aria-label="text button group">

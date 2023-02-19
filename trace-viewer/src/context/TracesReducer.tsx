@@ -10,7 +10,7 @@ const tracesReducer = (state: TracesState, action: any) => {
         case ACTIONS.ADD_TRACE:
             // parse the text file with traces
             const agents = parseTrace(action.payload.content);
-            agents.map((trace, index) => console.log(trace.x, trace.z))
+            // agents.map((trace, index) => console.log(trace.x, trace.z))
             return {
                 ...state,
                 traces: agents
