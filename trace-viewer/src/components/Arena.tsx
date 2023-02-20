@@ -9,7 +9,7 @@ import {
     FormGroup,
     FormLabel,
     Grid, IconButton, MenuItem, Select,
-    Slider
+    Slider, Tooltip
 } from "@mui/material";
 import {ACTIONS} from "@/context/TracesReducer";
 import PauseCircleIcon from '@mui/icons-material/PauseCircle';
@@ -74,7 +74,7 @@ function detectionMarks(traces: agentTrace[]) {
 
 function signalingMarks(resourceTimes: number[], tr: agentTrace) {
     const signaling = resourceTimes.map((resourceTime, index) => {
-            const timeIndex = tr.time.findIndex((itime) =>  itime === resourceTime);
+            const timeIndex = tr.time.findIndex((itime) => itime === resourceTime);
             if (timeIndex !== -1 && tr.signaling[timeIndex] === 1) return {value: index, label: '🚨'};
         }
     )
@@ -93,10 +93,12 @@ const Arena: FC<IArena> = () => {
     const [time, setTime] = useState<number>(0);
     const [play, setPlay] = useState<{ isPlaying: boolean, speed: number }>({isPlaying: false, speed: 1});
     const [marks, setMarks] = useState<{ value: number, label: string }[] | false>(false);
-    const [options, setOptions] = useState<{ showDetectionMarks: boolean, showSignalingMarks: boolean, showInfo: boolean }>({
+    const [tailLength, setTailLength] = useState<number>(100);
+    const [options, setOptions] = useState<{ showDetectionMarks: boolean, showSignalingMarks: boolean, showInfo: boolean, showTrace: boolean }>({
         showDetectionMarks: true,
         showSignalingMarks: true,
-        showInfo: true
+        showInfo: true,
+        showTrace: true
     });
     const {tracesState, tracesDispatcher} = useTraceContext();
 
@@ -149,7 +151,7 @@ const Arena: FC<IArena> = () => {
                 // style={{backgroundColor: "lightgray"}}
             >
                 <Grid container direction="row" justifyContent="flex-end" alignItems="flex-start" spacing={0}>
-                    <Grid item xs={12} sm={9}
+                    <Grid item xs={12} sm={8}
                         // style={{backgroundColor: "lightskyblue"}}
                     >
                         <Box display="flex" justifyContent="flex-end">
@@ -163,7 +165,10 @@ const Arena: FC<IArena> = () => {
                                                     key={index}
                                                     time={tracesState.traces ? tracesState.traces[0].time[time] : 0}
                                                     trace={trace}
-                                                    agentColors={colors[index]} showInfo={options.showInfo}/>
+                                                    agentColors={colors[index]} showInfo={options.showInfo}
+                                                    showAgentTrace={options.showTrace}
+                                                    tailLength={tailLength}
+                                                />
                                             )
                                         })
                                     }
@@ -171,7 +176,7 @@ const Arena: FC<IArena> = () => {
                             </svg>
                         </Box>
                     </Grid>
-                    <Grid item xs={12} sm={3}
+                    <Grid item xs={12} sm={4}
                         // style={{backgroundColor: "lightseagreen"}}
                     >
                         <Box>
@@ -191,7 +196,7 @@ const Arena: FC<IArena> = () => {
                                                     }}
                                                     name="foundings"/>
                                             }
-                                            label="Show detections"
+                                            label="Show detections marks"
                                         />
                                         <FormControlLabel
                                             control={
@@ -205,7 +210,7 @@ const Arena: FC<IArena> = () => {
                                                     }}
                                                     name="signaling"/>
                                             }
-                                            label="Show signaling"
+                                            label="Show signaling marks"
                                         />
                                         <FormControlLabel
                                             control={
@@ -219,7 +224,41 @@ const Arena: FC<IArena> = () => {
                                                     }}
                                                     name="info"/>
                                             }
-                                            label="Show info"
+                                            label="Show agent info"
+                                        />
+                                        <Tooltip
+                                            title={"Click on agent to show individual trace"}
+                                            placement={"bottom"}
+                                            arrow
+                                        >
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox
+                                                    checked={options.showTrace}
+                                                    onChange={(event) => {
+                                                        setOptions({
+                                                            ...options,
+                                                            showTrace: event.target.checked
+                                                        })
+                                                    }}
+                                                    name="trace"/>
+                                            }
+                                            label="Show agent trace tail"
+                                        /></Tooltip>
+                                        <FormControlLabel
+                                            labelPlacement="top"
+                                            control={
+                                                <Slider
+                                                    size="small"
+                                                    min={0}
+                                                    max={tracesState.traces !== undefined ? tracesState.traces[0].time.length - 1 : 0}
+                                                    defaultValue={tailLength}
+                                                    onChange={(event, value) => setTailLength(value as number)}
+                                                    aria-label="Small"
+                                                    valueLabelDisplay="auto"
+                                                />
+                                            }
+                                            label="Set tail length"
                                         />
                                     </FormGroup>
                                 </FormControl>
@@ -272,6 +311,8 @@ const Arena: FC<IArena> = () => {
                             <MenuItem value={2}>x2</MenuItem>
                             <MenuItem value={5}>x5</MenuItem>
                             <MenuItem value={10}>x10</MenuItem>
+                            <MenuItem value={15}>x15</MenuItem>
+                            <MenuItem value={20}>x20</MenuItem>
                         </Select>
                     </ButtonGroup>
                 </Box>
