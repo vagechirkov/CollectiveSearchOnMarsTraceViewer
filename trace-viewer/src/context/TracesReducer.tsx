@@ -3,6 +3,7 @@ import {agentTrace, TracesState} from "@/context/TracesContext";
 export const ACTIONS = {
     ADD_TRACE: 'ADD_TRACE',
     ADD_FILE: 'ADD_FILE',
+    DELETE_FILE: 'DELETE_FILE',
 }
 
 const tracesReducer = (state: TracesState, action: any) => {
@@ -24,6 +25,13 @@ const tracesReducer = (state: TracesState, action: any) => {
             return {
                 ...state,
                 files: [...state.files || [], file]
+            }
+        case ACTIONS.DELETE_FILE:
+            const fileName = action.payload.fileName;
+            return {
+                ...state,
+                traces: undefined,
+                files: state.files?.filter((f) => f.name !== fileName)
             }
 
         default:

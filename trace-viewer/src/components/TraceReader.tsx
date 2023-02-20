@@ -2,8 +2,9 @@ import {FC, useMemo} from "react";
 import useTraceContext, {traceFile} from "@/context/TracesContext";
 import {ACTIONS} from "@/context/TracesReducer";
 import {useDropzone, FileWithPath} from "react-dropzone";
-import {Avatar, List, ListItemAvatar, ListItemButton, ListItemText, styled} from "@mui/material";
+import {Avatar, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, styled} from "@mui/material";
 import DescriptionIcon from '@mui/icons-material/Description';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const baseStyle = {
     flex: 1,
@@ -34,7 +35,7 @@ const rejectStyle = {
     borderColor: '#ff1744'
 };
 
-const Demo = styled('div')(({ theme }) => ({
+const Demo = styled('div')(({theme}) => ({
     backgroundColor: theme.palette.background.paper,
 }));
 
@@ -93,34 +94,46 @@ const TraceReader: FC = () => {
                 <p>Drag 'n' drop trace files here, or click to select files</p>
             </div>
             {tracesState.files &&
-               ( <Demo>
+                (<Demo>
                     <List dense={true}>
                         {tracesState.files.map((file) => {
                                 return (
-                                    <ListItemButton
-                                        key={file.name}
-                                        onClick={onFileClick}
-                                    >
-                                        <ListItemAvatar>
-                                            <Avatar>
-                                                <DescriptionIcon/>
-                                            </Avatar>
-                                        </ListItemAvatar>
-                                        <ListItemText
-                                            primaryTypographyProps={{noWrap: true}}
-                                            primary={file.name}
-                                            style={{overflow: "hidden", textOverflow: "ellipsis", width: '11rem'}}
-                                        />
-                                    </ListItemButton >
+                                    <ListItem>
+                                        <ListItemButton
+                                            key={file.name}
+                                            onClick={onFileClick}
+                                        >
+                                            <ListItemAvatar>
+                                                <Avatar>
+                                                    <DescriptionIcon/>
+                                                </Avatar>
+                                            </ListItemAvatar>
+                                            <ListItemText
+                                                primaryTypographyProps={{noWrap: true}}
+                                                primary={file.name}
+                                                style={{overflow: "hidden", textOverflow: "ellipsis", width: '11rem'}}
+                                            />
+
+                                        </ListItemButton>
+                                        <IconButton color="error"
+                                                    onClick={() => tracesDispatcher(
+                                                        {
+                                                            type: ACTIONS.DELETE_FILE,
+                                                            payload: {fileName: file.name}
+                                                        })}>
+                                            <DeleteIcon/>
+                                        </IconButton>
+                                    </ListItem>
                                 );
                             }
-                            )
+                        )
                         }
                     </List>
                 </Demo>)
             }
         </div>
-    );
+    )
+        ;
 }
 
 export default TraceReader;

@@ -45,7 +45,9 @@ export const tracesInitialState: TracesState = {
 }
 
 const tracesInitializer = (initialState: TracesState) => {
-    // return JSON.parse(localStorage.getItem(LOCAL_STORAGE_TRACES_STATE_KEY) || '{}') || initialState;
+    // if (typeof window !== 'undefined') {
+    //     return JSON.parse(localStorage.getItem(LOCAL_STORAGE_TRACES_STATE_KEY) || '{}') || initialState;
+    // }
     return initialState;
 }
 
@@ -59,7 +61,7 @@ export const TracesContextProvider: FC<ITracesContextProvider> = (props) => {
     const [state, dispatch] = useReducer(tracesReducer, tracesInitialState, tracesInitializer);
 
     // useEffect(() => {
-    //     if(saveToLocalStorage)
+    //     if (saveToLocalStorage)
     //         localStorage.setItem(LOCAL_STORAGE_TRACES_STATE_KEY, JSON.stringify(state));
     // }, [state]);
 
