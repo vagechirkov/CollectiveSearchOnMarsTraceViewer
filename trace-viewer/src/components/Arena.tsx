@@ -45,10 +45,7 @@ function estimateSpeed(trace: agentTrace) {
     // calculate the whole distance the agent/resource traveled
     let distance = 0;
     for (let i = 1; i < trace.x.length - 2; i++) {
-        console.log(distance);
-        console.log(trace.x[i], trace.x[i - 1], trace.z[i], trace.z[i - 1]);
         distance += Math.sqrt(Math.pow(trace.x[i] - trace.x[i - 1], 2) + Math.pow(trace.z[i] - trace.z[i - 1], 2));
-
     }
     return distance / (trace.time.length * 0.1);
 }
@@ -194,8 +191,8 @@ const Arena: FC<IArena> = () => {
                         <Box>
                             <Box>
                                 <FormControl sx={{m: 3}} component="fieldset" variant="standard">
-                                    <FormLabel component="legend">Resource
-                                        speed: {tracesState.traces && estimateSpeed(tracesState.traces[0])}</FormLabel>
+                                    {/*<FormLabel component="legend">Resource*/}
+                                    {/*    speed: {tracesState.traces && estimateSpeed(tracesState.traces[0])}</FormLabel>*/}
                                     <FormLabel component="legend">Options</FormLabel>
                                     <FormGroup>
                                         <FormControlLabel
