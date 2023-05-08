@@ -15,14 +15,16 @@ import {ACTIONS} from "@/context/TracesReducer";
 import PauseCircleIcon from '@mui/icons-material/PauseCircle';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 
+// colorblind friendly colors
+// https://davidmathlogic.com/colorblind/#%23000000-%23E69F00-%2356B4E9-%23009E73-%23F0E442-%230072B2-%23D55E00-%23CC79A7
 
 const colors = [
-    "#D5D5D3",
-    "#74A089",
-    "#FDDDA0",
-    "#9A8822",
-    "#F5CDB4",
-    "#F8AFA8",
+    "#56B4E9",
+    "#009E73",
+    "#F0E442",
+    "#D55E00",
+    "#0072B2",
+    "#CC79A7",
 ]
 
 interface IArena {
