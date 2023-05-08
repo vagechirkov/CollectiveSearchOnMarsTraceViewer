@@ -106,7 +106,7 @@ const Arena: FC<IArena> = () => {
     const [options, setOptions] = useState<{ showDetectionMarks: boolean, showSignalingMarks: boolean, showInfo: boolean, showTrace: boolean }>({
         showDetectionMarks: true,
         showSignalingMarks: true,
-        showInfo: true,
+        showInfo: false,
         showTrace: true
     });
     const {tracesState, tracesDispatcher} = useTraceContext();
