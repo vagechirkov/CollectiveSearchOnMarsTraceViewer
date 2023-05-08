@@ -2,16 +2,8 @@ import {Box, FormControl, FormLabel, FormGroup, FormControlLabel, Button} from "
 import html2canvas from "html2canvas";
 import {FC, useCallback, useEffect, useState} from "react";
 import {saveAs} from "file-saver";
-// const GifEncoder = require('gif-encoder-2');
-// const { writeFile } = require('fs');
-const path = require('path');
-// const { createCanvas } = require('canvas')
 const GIF = require('gif.js');
 import {workerStr} from './workerStr';
-
-const workerBlob = new Blob([workerStr], {
-    type: 'application/javascript'
-});
 
 interface ICreateGif {
     changeTime: (newTime: number) => void;
@@ -106,6 +98,10 @@ const CreateGif: FC<ICreateGif> = ({changeTime, currentTime, speed, gifLength = 
     }
 
     const createGif = useCallback(() => {
+        const workerBlob = new Blob([workerStr], {
+            type: 'application/javascript'
+        });
+
         const gif = new GIF({
             workers: 2,
             workerScript: URL.createObjectURL(workerBlob),
