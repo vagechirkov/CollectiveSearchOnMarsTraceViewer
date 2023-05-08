@@ -821,6 +821,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"gif.js@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "gif.js@npm:0.2.0"
+  checksum: 063a5596ba73a73e3a0b3bec38cf4c8c4ff4e4dcaa7856172cf5d2567b38f0332c64290810a079114cb277346edcd0bfb71884a2003fb3868c018429f5ee7769
+  languageName: node
+  linkType: hard
+
 "has-flag@npm:^3.0.0":
   version: 3.0.0
   resolution: "has-flag@npm:3.0.0"
@@ -1256,6 +1263,7 @@ __metadata:
     "@types/node": 18.14.0
     "@types/react": 18.0.28
     "@types/react-dom": 18.0.11
+    gif.js: ^0.2.0
     html2canvas: ^1.4.1
     next: 13.1.6
     react: 18.2.0
