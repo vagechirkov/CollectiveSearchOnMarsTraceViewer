@@ -16,12 +16,12 @@ const workerBlob = new Blob([workerStr], {
 interface ICreateGif {
     changeTime: (newTime: number) => void;
     currentTime: number;
+    speed: number;
     gifLength?: number;
-    speed?: number;
     filename?: string;
 }
 
-const CreateGif: FC<ICreateGif> = ({changeTime, currentTime = 0, gifLength = 30, speed = 5, filename = 'noname'}) => {
+const CreateGif: FC<ICreateGif> = ({changeTime, currentTime, speed, gifLength = 60, filename = 'noname'}) => {
     // state with the object urls of the blobs
     const [nFrames, setNFrames] = useState<number>(gifLength);
     const [blobs, setBlobs] = useState<string[]>([]);
@@ -82,17 +82,18 @@ const CreateGif: FC<ICreateGif> = ({changeTime, currentTime = 0, gifLength = 30,
         });
     }, [blobs])
 
-    function waitForImagesLoaded(imageURLs: string[], callback: (imageElements: HTMLImageElement[]) => void){
+    function waitForImagesLoaded(imageURLs: string[], callback: (imageElements: HTMLImageElement[]) => void) {
+        // copied from https://github.com/jnordberg/gif.js/issues/76#issuecomment-319216136
         let imageElements: HTMLImageElement[] = [];
         let remaining = imageURLs.length;
-        const onEachImageLoad = function(){
+        const onEachImageLoad = function () {
             if (--remaining === 0 && callback) {
                 callback(imageElements);
             }
         };
 
         // first create the images and apply the onload method
-        for (let i = 0, len = imageURLs.length; i < len; i++){
+        for (let i = 0, len = imageURLs.length; i < len; i++) {
             var img = new Image();
             imageElements.push(img);
             img.onload = onEachImageLoad;
@@ -115,8 +116,10 @@ const CreateGif: FC<ICreateGif> = ({changeTime, currentTime = 0, gifLength = 30,
         });
 
         gif.on('finished', (blob: Blob) => {
+            const t1 = ((currentTime - gifLength * speed) / 600).toFixed(2);
+            const t2 = ((currentTime) / 600).toFixed(2);
             // save gif
-            saveAs(blob, `${filename}-${((currentTime - gifLength * speed)/600).toFixed(2)}-speed-${speed}.gif`);
+            saveAs(blob, `${filename}-from-${t1}m-to-${t2}m-speed-${speed}.gif`);
 
             // remove images from body
             blobs.forEach(imgUrl => {
@@ -127,7 +130,7 @@ const CreateGif: FC<ICreateGif> = ({changeTime, currentTime = 0, gifLength = 30,
             setFileSaved(true);
         });
 
-        waitForImagesLoaded(blobs, function(images){
+        waitForImagesLoaded(blobs, function (images) {
             for (let i = 0; i < images.length; i++) {
                 gif.addFrame(images[i], {copy: false, delay: 100});
             }
