@@ -167,7 +167,7 @@ const Arena: FC<IArena> = () => {
                         // style={{backgroundColor: "lightskyblue"}}
                     >
                         <Box display="flex" justifyContent="flex-end">
-                            <svg height={550} viewBox="-210 -210 420 420">
+                            <svg height={550} viewBox="-210 -210 420 420" id={'arena'}>
                                 <g>
                                     <circle cx="0" cy="0" r={`${400 / 2}`} fill="none" stroke="black"/>
                                     {tracesState.traces !== undefined &&
