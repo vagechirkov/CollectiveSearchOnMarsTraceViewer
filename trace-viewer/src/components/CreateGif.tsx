@@ -9,6 +9,10 @@ const path = require('path');
 const GIF = require('gif.js');
 import {workerStr} from './workerStr';
 
+const workerBlob = new Blob([workerStr], {
+    type: 'application/javascript'
+});
+
 interface ICreateGif {
     changeTime: (newTime: number) => void;
     currentTime: number;
@@ -78,11 +82,29 @@ const CreateGif: FC<ICreateGif> = ({changeTime, currentTime = 0, gifLength = 30,
         });
     }, [blobs])
 
-    const createGif = useCallback(() => {
-        const workerBlob = new Blob([workerStr], {
-            type: 'application/javascript'
-        });
+    function waitForImagesLoaded(imageURLs: string[], callback: (imageElements: HTMLImageElement[]) => void){
+        let imageElements: HTMLImageElement[] = [];
+        let remaining = imageURLs.length;
+        const onEachImageLoad = function(){
+            if (--remaining === 0 && callback) {
+                callback(imageElements);
+            }
+        };
 
+        // first create the images and apply the onload method
+        for (let i = 0, len = imageURLs.length; i < len; i++){
+            var img = new Image();
+            imageElements.push(img);
+            img.onload = onEachImageLoad;
+            img.src = imageURLs[i];
+
+            // add image element to body but hidden
+            img.style.display = 'none';
+            document.body.appendChild(img);
+        }
+    }
+
+    const createGif = useCallback(() => {
         const gif = new GIF({
             workers: 2,
             workerScript: URL.createObjectURL(workerBlob),
@@ -90,20 +112,6 @@ const CreateGif: FC<ICreateGif> = ({changeTime, currentTime = 0, gifLength = 30,
             width: 1100,
             height: 1100,
             debug: false,
-        });
-
-        blobs.forEach(imgUrl => {
-            const img = new Image();
-            img.onload = () => {
-                URL.revokeObjectURL(imgUrl);
-            };
-            img.src = imgUrl;
-
-            // add image element to body but hidden
-            img.style.display = 'none';
-            document.body.appendChild(img);
-
-            gif.addFrame(img, {copy: false, delay: 100});
         });
 
         gif.on('finished', (blob: Blob) => {
@@ -119,7 +127,13 @@ const CreateGif: FC<ICreateGif> = ({changeTime, currentTime = 0, gifLength = 30,
             setFileSaved(true);
         });
 
-        gif.render();
+        waitForImagesLoaded(blobs, function(images){
+            for (let i = 0; i < images.length; i++) {
+                gif.addFrame(images[i], {copy: false, delay: 100});
+            }
+            gif.render();
+        });
+
     }, [blobs, fileSaved]);
 
 
