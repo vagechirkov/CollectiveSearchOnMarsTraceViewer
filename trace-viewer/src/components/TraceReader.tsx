@@ -98,7 +98,7 @@ const TraceReader: FC = () => {
                     <List dense={true}>
                         {tracesState.files.map((file) => {
                                 return (
-                                    <ListItem>
+                                    <ListItem key={file.name + '-list'}>
                                         <ListItemButton
                                             key={file.name}
                                             onClick={onFileClick}

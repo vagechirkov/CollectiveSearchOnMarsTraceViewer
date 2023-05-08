@@ -574,6 +574,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/file-saver@npm:^2.0.5":
+  version: 2.0.5
+  resolution: "@types/file-saver@npm:2.0.5"
+  checksum: a31d6ee2abf99598647139f8f35b37b6e1bacf6c7ddf05c66651b9b0e6e53381aa0e8ed13f37faa6e496e0eb1da87c97e6c70fd589d5b83b0c95c57cb64ce92a
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:18.14.0":
   version: 18.14.0
   resolution: "@types/node@npm:18.14.0"
@@ -795,6 +802,13 @@ __metadata:
   version: 4.0.0
   resolution: "escape-string-regexp@npm:4.0.0"
   checksum: 98b48897d93060f2322108bf29db0feba7dd774be96cd069458d1453347b25ce8682ecc39859d4bca2203cc0ab19c237bcc71755eff49a0f8d90beadeeba5cc5
+  languageName: node
+  linkType: hard
+
+"file-saver@npm:^2.0.5":
+  version: 2.0.5
+  resolution: "file-saver@npm:2.0.5"
+  checksum: c62d96e5cebc58b4bdf3ae8a60d5cf9607ad82f75f798c33a4ee63435ac2203002584d5256a2a780eda7feb5e19dc3b6351c2212e58b3f529e63d265a7cc79f7
   languageName: node
   linkType: hard
 
@@ -1260,9 +1274,11 @@ __metadata:
     "@mui/material": ^5.11.9
     "@next/font": 13.1.6
     "@react-spring/web": ^9.6.1
+    "@types/file-saver": ^2.0.5
     "@types/node": 18.14.0
     "@types/react": 18.0.28
     "@types/react-dom": 18.0.11
+    file-saver: ^2.0.5
     gif.js: ^0.2.0
     html2canvas: ^1.4.1
     next: 13.1.6

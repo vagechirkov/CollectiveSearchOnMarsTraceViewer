@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from "react";
+import React, {FC, useCallback, useEffect, useState} from "react";
 import useTraceContext, {agentTrace} from "@/context/TracesContext";
 import Agent from "@/components/Agent";
 import {
@@ -157,6 +157,10 @@ const Arena: FC<IArena> = () => {
         }
     }, [play.isPlaying, time, play.speed])
 
+    const changeTime = useCallback((nextTime: number) => {
+        setTime(nextTime);
+    }, [time]);
+
     return (
         <Grid container direction="column" justifyContent="space-between" spacing={0}>
             <Grid item xs={12} sm={12}
@@ -166,8 +170,8 @@ const Arena: FC<IArena> = () => {
                     <Grid item xs={12} sm={8}
                         // style={{backgroundColor: "lightskyblue"}}
                     >
-                        <Box display="flex" justifyContent="flex-end">
-                            <svg height={550} viewBox="-210 -210 420 420" id={'arena'}>
+                        <Box display="flex" justifyContent="flex-end"  id={'arena'}>
+                            <svg height={550} viewBox="-210 -210 420 420">
                                 <g>
                                     <circle cx="0" cy="0" r={`${400 / 2}`} fill="none" stroke="black"/>
                                     {tracesState.traces !== undefined &&
@@ -277,7 +281,7 @@ const Arena: FC<IArena> = () => {
 
                                     </FormGroup>
                                 </FormControl>
-                                <CreateGif/>
+                                <CreateGif changeTime={changeTime} currentTime={time}/>
                             </Box>
                         </Box>
                     </Grid>
