@@ -14,6 +14,7 @@ import {
 import {ACTIONS} from "@/context/TracesReducer";
 import PauseCircleIcon from '@mui/icons-material/PauseCircle';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
+import CreateGif from "@/components/CreateGif";
 
 // colorblind friendly colors
 // https://davidmathlogic.com/colorblind/#%23000000-%23E69F00-%2356B4E9-%23009E73-%23F0E442-%230072B2-%23D55E00-%23CC79A7
@@ -273,8 +274,10 @@ const Arena: FC<IArena> = () => {
                                             }
                                             label="Set tail length"
                                         />
+
                                     </FormGroup>
                                 </FormControl>
+                                <CreateGif/>
                             </Box>
                         </Box>
                     </Grid>
