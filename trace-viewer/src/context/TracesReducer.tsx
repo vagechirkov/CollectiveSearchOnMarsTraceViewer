@@ -37,7 +37,8 @@ const tracesReducer = (state: TracesState, action: any) => {
             return {
                 ...state,
                 traces: undefined,
-                files: state.files?.filter((f) => f.name !== fileName)
+                files: state.files?.filter((f) => f.name !== fileName),
+                currentFile: 0
             }
 
         default:
