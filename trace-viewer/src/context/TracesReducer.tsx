@@ -2,6 +2,7 @@ import {agentTrace, TracesState} from "@/context/TracesContext";
 
 export const ACTIONS = {
     ADD_TRACE: 'ADD_TRACE',
+    SELECT_FILE: 'SELECT_FILE',
     ADD_FILE: 'ADD_FILE',
     DELETE_FILE: 'DELETE_FILE',
 }
@@ -15,6 +16,11 @@ const tracesReducer = (state: TracesState, action: any) => {
             return {
                 ...state,
                 traces: agents
+            }
+        case ACTIONS.SELECT_FILE:
+            return {
+                ...state,
+                currentFile: action.payload.fileIndex
             }
         case ACTIONS.ADD_FILE:
             const file = action.payload.file;

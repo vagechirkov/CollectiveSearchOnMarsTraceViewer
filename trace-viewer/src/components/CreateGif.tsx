@@ -12,27 +12,30 @@ import {workerStr} from './workerStr';
 interface ICreateGif {
     changeTime: (newTime: number) => void;
     currentTime: number;
-    nSeconds?: number;
+    gifLength?: number;
+    speed?: number;
+    filename?: string;
 }
 
-const CreateGif: FC<ICreateGif> = ({changeTime, currentTime= 0, nSeconds= 30}) => {
+const CreateGif: FC<ICreateGif> = ({changeTime, currentTime = 0, gifLength = 30, speed = 5, filename = 'noname'}) => {
     // state with the object urls of the blobs
-    const [nFrames, setNFrames] = useState<number>(nSeconds * 10);
+    const [nFrames, setNFrames] = useState<number>(gifLength);
     const [blobs, setBlobs] = useState<string[]>([]);
     const [startCreatingGif, setStartCreatingGif] = useState<boolean>(false);
     const [fileSaved, setFileSaved] = useState<boolean>(false);
     const [screenshotsDone, setScreenshotsDone] = useState<boolean>(true);
 
     useEffect(() => {
-        if (startCreatingGif && screenshotsDone && nFrames > 0) {
+        if (startCreatingGif && screenshotsDone && nFrames >= 0) {
             setScreenshotsDone(false);
-            changeTime(currentTime + (nSeconds * 10 - nFrames) / 10);
-            takeScreenshot();
+            const newTime = currentTime + speed;
+            takeScreenshot(newTime);
 
             if (nFrames > 0) {
-                setNFrames(nFrames - 10);
+                setNFrames(nFrames - 1);
             } else {
                 setStartCreatingGif(false);
+                createGif();
             }
         }
     }, [startCreatingGif, nFrames, screenshotsDone]);
@@ -44,7 +47,7 @@ const CreateGif: FC<ICreateGif> = ({changeTime, currentTime= 0, nSeconds= 30}) =
             // reset fileSaved
             setFileSaved(false);
             // reset nFrames
-            setNFrames(nSeconds * 10);
+            setNFrames(gifLength);
 
             // screenshot done
             setScreenshotsDone(true);
@@ -53,13 +56,8 @@ const CreateGif: FC<ICreateGif> = ({changeTime, currentTime= 0, nSeconds= 30}) =
         }
     }, [fileSaved]);
 
-    useEffect(() => {
-        if (nFrames === 0 && screenshotsDone) {
-            createGif();
-        }
-    }, [blobs, nFrames, screenshotsDone]);
 
-    const takeScreenshot = useCallback(() => {
+    const takeScreenshot = useCallback((nextTime: number) => {
         html2canvas(document.getElementById('arena') as HTMLElement).then(
             function (canvas) {
                 // document.body.appendChild(canvas);
@@ -68,12 +66,16 @@ const CreateGif: FC<ICreateGif> = ({changeTime, currentTime= 0, nSeconds= 30}) =
                         if (blob !== null) {
                             const imgUrl = URL.createObjectURL(blob);
                             setBlobs([...blobs, imgUrl]);
-                            setScreenshotsDone(true);
+
                         }
                     }
                 );
             }
-        );
+        ).then(() => {
+            console.log('screenshot taken');
+            setScreenshotsDone(true);
+            changeTime(nextTime);
+        });
     }, [blobs])
 
     const createGif = useCallback(() => {
@@ -85,25 +87,28 @@ const CreateGif: FC<ICreateGif> = ({changeTime, currentTime= 0, nSeconds= 30}) =
             workers: 2,
             workerScript: URL.createObjectURL(workerBlob),
             quality: 10,
-            width: 825,
-            height: 815,
+            width: 1100,
+            height: 1100,
+            debug: false,
         });
 
         blobs.forEach(imgUrl => {
             const img = new Image();
-            img.onload = () => {URL.revokeObjectURL(imgUrl);};
+            img.onload = () => {
+                URL.revokeObjectURL(imgUrl);
+            };
             img.src = imgUrl;
 
             // add image element to body but hidden
             img.style.display = 'none';
             document.body.appendChild(img);
 
-            gif.addFrame(img, {copy: false, delay: 200})
+            gif.addFrame(img, {copy: false, delay: 100});
         });
 
         gif.on('finished', (blob: Blob) => {
             // save gif
-            saveAs(blob, 'filename.gif');
+            saveAs(blob, `${filename}-${((currentTime - gifLength * speed)/600).toFixed(2)}-speed-${speed}.gif`);
 
             // remove images from body
             blobs.forEach(imgUrl => {
@@ -126,7 +131,7 @@ const CreateGif: FC<ICreateGif> = ({changeTime, currentTime= 0, nSeconds= 30}) =
                 <FormGroup>
                     <FormControlLabel
                         control={
-                            <Button onClick={() => setStartCreatingGif(true)}>
+                            <Button onClick={() => setStartCreatingGif(true)} variant={"contained"}>
                                 Create GIF
                             </Button>
                         }

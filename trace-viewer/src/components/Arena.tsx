@@ -106,7 +106,12 @@ const Arena: FC<IArena> = () => {
     const [play, setPlay] = useState<{ isPlaying: boolean, speed: number }>({isPlaying: false, speed: 1});
     const [marks, setMarks] = useState<{ value: number, label: string }[] | false>(false);
     const [tailLength, setTailLength] = useState<number>(100);
-    const [options, setOptions] = useState<{ showDetectionMarks: boolean, showSignalingMarks: boolean, showInfo: boolean, showTrace: boolean }>({
+    const [options, setOptions] = useState<{
+        showDetectionMarks: boolean,
+        showSignalingMarks: boolean,
+        showInfo: boolean,
+        showTrace: boolean
+    }>({
         showDetectionMarks: true,
         showSignalingMarks: true,
         showInfo: false,
@@ -170,26 +175,28 @@ const Arena: FC<IArena> = () => {
                     <Grid item xs={12} sm={8}
                         // style={{backgroundColor: "lightskyblue"}}
                     >
-                        <Box display="flex" justifyContent="flex-end"  id={'arena'}>
-                            <svg height={550} viewBox="-210 -210 420 420">
-                                <g>
-                                    <circle cx="0" cy="0" r={`${400 / 2}`} fill="none" stroke="black"/>
-                                    {tracesState.traces !== undefined &&
-                                        tracesState.traces.map((trace, index) => {
-                                            return (
-                                                <Agent
-                                                    key={index}
-                                                    time={tracesState.traces ? tracesState.traces[0].time[time] : 0}
-                                                    trace={trace}
-                                                    agentColors={colors[index]} showInfo={options.showInfo}
-                                                    showAgentTrace={options.showTrace}
-                                                    tailLength={tailLength}
-                                                />
-                                            )
-                                        })
-                                    }
-                                </g>
-                            </svg>
+                        <Box display="flex" justifyContent="flex-end">
+                            <div id={'arena'}>
+                                <svg height={550} viewBox="-210 -210 420 420">
+                                    <g>
+                                        <circle cx="0" cy="0" r={`${400 / 2}`} fill="none" stroke="black"/>
+                                        {tracesState.traces !== undefined &&
+                                            tracesState.traces.map((trace, index) => {
+                                                return (
+                                                    <Agent
+                                                        key={index}
+                                                        time={tracesState.traces ? tracesState.traces[0].time[time] : 0}
+                                                        trace={trace}
+                                                        agentColors={colors[index]} showInfo={options.showInfo}
+                                                        showAgentTrace={options.showTrace}
+                                                        tailLength={tailLength}
+                                                    />
+                                                )
+                                            })
+                                        }
+                                    </g>
+                                </svg>
+                            </div>
                         </Box>
                     </Grid>
                     <Grid item xs={12} sm={4}
@@ -281,7 +288,12 @@ const Arena: FC<IArena> = () => {
 
                                     </FormGroup>
                                 </FormControl>
-                                <CreateGif changeTime={changeTime} currentTime={time}/>
+                                <CreateGif
+                                    changeTime={changeTime}
+                                    currentTime={time}
+                                    speed={play.speed}
+                                    filename={tracesState.files !== undefined ? tracesState.files[tracesState.currentFile].name : "traces"}
+                                />
                             </Box>
                         </Box>
                     </Grid>

@@ -84,6 +84,10 @@ const TraceReader: FC = () => {
         const file = tracesState.files.find((file) => file.name === event.target.innerText);
         if (!file) return;
 
+        // find the index of the file
+        const fileIndex = tracesState.files.findIndex((f) => f.name === file.name);
+        tracesDispatcher({type: ACTIONS.SELECT_FILE, payload: {fileIndex: fileIndex}});
+
         tracesDispatcher({type: ACTIONS.ADD_TRACE, payload: {content: file.content}});
     }
 
