@@ -13,7 +13,7 @@ interface ICreateGif {
     filename?: string;
 }
 
-const CreateGif: FC<ICreateGif> = ({changeTime, currentTime, speed, gifLength = 60, filename = 'noname'}) => {
+const CreateGif: FC<ICreateGif> = ({changeTime, currentTime, speed, gifLength = 120, filename = 'noname'}) => {
     // state with the object urls of the blobs
     const [nFrames, setNFrames] = useState<number>(gifLength);
     const [blobs, setBlobs] = useState<string[]>([]);
