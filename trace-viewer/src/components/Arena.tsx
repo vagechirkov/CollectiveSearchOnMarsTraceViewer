@@ -164,9 +164,9 @@ const Arena: FC<IArena> = () => {
                         // style={{backgroundColor: "lightskyblue"}}
                     >
                         <Box display="flex" justifyContent="flex-end">
-                            <svg height={550} viewBox="-200 -200 400 400">
+                            <svg height={550} viewBox="-210 -210 420 420">
                                 <g>
-                                    <circle cx="0" cy="0" r={`${375 / 2}`} fill="none" stroke="black"/>
+                                    <circle cx="0" cy="0" r={`${400 / 2}`} fill="none" stroke="black"/>
                                     {tracesState.traces !== undefined &&
                                         tracesState.traces.map((trace, index) => {
                                             return (
