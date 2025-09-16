@@ -2,9 +2,10 @@ import {createContext, FC, useContext, useEffect, useReducer} from "react";
 import tracesReducer, {ACTIONS} from "@/context/TracesReducer";
 
 const examples = [
-    "ex_1_alone_resource_1DE846936D166543_0_traces.txt",
-    "ex_2_multi_2_resource_156A4894999DCEE2_33144C1FA5587E4C_0_traces.txt",
-    "ex_3_multi_2_resource_32FA06AE976FB58D_EE5B78DA65AE5B21_0_traces.txt"
+    "NP_slow_resource_9FE53778A1A7D688_F8C9B7F54C5C6636_ABBD3E4598036829_2BDBFDF4E9F3ABEF_4556754228EC9C87.txt",
+    "NP_fast_resource_C7B7CEA62ACD94C7_2491AF65745A19AB_9ED34F0449348781_26FAC3287C4ED527_66672276B7EDD0ED.txt",
+    "FP_slow_resource_2805D2460AF6ED91_D1F3AD421C0D25A0_DA02E7368CE5F747_3289B54D7FAEE3D2_E929E08041BE430E.txt",
+    "FP_fast_resource_C297D7E9CB532B39_A2F1F2CB56E867B8_2D583462118D9282_575BA14AF13ECD1D_9DCF87B73BBADE90.txt"
 ]
 
 const baseUrl = 'https://raw.githubusercontent.com/vagechirkov/CollectiveSearchOnMarsTraceViewer/main/examples/';

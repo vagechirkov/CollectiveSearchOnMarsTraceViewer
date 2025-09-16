@@ -249,10 +249,10 @@ const Arena: FC<IArena> = () => {
                                                     }}
                                                     name="info"/>
                                             }
-                                            label="Show agent info"
+                                            label="Show participant score"
                                         />
                                         <Tooltip
-                                            title={"Click on agent to show individual trace"}
+                                            title={"Click on participant to show/hide individual trace"}
                                             placement={"bottom"}
                                             arrow
                                         >
@@ -268,7 +268,7 @@ const Arena: FC<IArena> = () => {
                                                         }}
                                                         name="trace"/>
                                                 }
-                                                label="Show agent trace tail"
+                                                label="Show participant trace tail"
                                             /></Tooltip>
                                         <FormControlLabel
                                             labelPlacement="top"
@@ -288,12 +288,12 @@ const Arena: FC<IArena> = () => {
 
                                     </FormGroup>
                                 </FormControl>
-                                <CreateGif
-                                    changeTime={changeTime}
-                                    currentTime={time}
-                                    speed={play.speed}
-                                    filename={tracesState.files !== undefined ? tracesState.files[tracesState.currentFile].name : "traces"}
-                                />
+                                {/*<CreateGif*/}
+                                {/*    changeTime={changeTime}*/}
+                                {/*    currentTime={time}*/}
+                                {/*    speed={play.speed}*/}
+                                {/*    filename={tracesState.files !== undefined ? tracesState.files[tracesState.currentFile].name : "traces"}*/}
+                                {/*/>*/}
                             </Box>
                         </Box>
                     </Grid>
